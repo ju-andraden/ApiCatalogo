@@ -48,10 +48,11 @@ namespace APICatalogo.Controllers
             {
                 return BadRequest();
             }
-
             _context.Produtos?.Add(produto);
             _context.SaveChanges();
-            return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
+
+            return new CreatedAtRouteResult("ObterProduto", 
+                new { id = produto.ProdutoId }, produto);
         }
 
         [HttpPut("{id:int}")]
@@ -63,6 +64,7 @@ namespace APICatalogo.Controllers
             }
             _context.Entry(produto).State = EntityState.Modified;
             _context.SaveChanges();
+
             return Ok(produto);
         }
 
@@ -75,9 +77,9 @@ namespace APICatalogo.Controllers
             {
                 return NotFound("Produto não encontrado...");
             }
-
             _context.Produtos?.Remove(produto);
             _context.SaveChanges();
+
             return Ok();
         }
     }
