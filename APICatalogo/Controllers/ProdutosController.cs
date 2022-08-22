@@ -1,6 +1,5 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +16,14 @@ namespace APICatalogo.Controllers
             _context = context;
         }
 
+        //await - para aguardar a operação
         [HttpGet]
+        public async Task<ActionResult<IEnumerable<Produto>>> Get2()
+        {
+            return await _context.Produtos.AsNoTracking().ToListAsync();
+        }
+
+        [HttpGet("produtos")]
         public ActionResult<List<Produto>> Get()
         {
             var produtos = _context.Produtos?.ToList();
@@ -30,9 +36,10 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterProduto")]
-        public ActionResult<Produto> Get(int id)
+        public async Task<ActionResult<Produto>> Get(int id)
         {
-            var produto = _context.Produtos?.FirstOrDefault(p => p.ProdutoId == id);
+            var produto = await _context.Produtos?.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.ProdutoId == id);
 
             if (produto is null)
             {
@@ -51,7 +58,7 @@ namespace APICatalogo.Controllers
             _context.Produtos?.Add(produto);
             _context.SaveChanges();
 
-            return new CreatedAtRouteResult("ObterProduto", 
+            return new CreatedAtRouteResult("ObterProduto",
                 new { id = produto.ProdutoId }, produto);
         }
 
