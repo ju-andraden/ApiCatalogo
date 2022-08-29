@@ -25,8 +25,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseMySql(mySqlConnection,
                     ServerVersion.AutoDetect(mySqlConnection)));
 
-builder.Services.AddTransient<IMeuServico, MeuServico>();
-builder.Services.AddScoped<ApiLoggingFilter>();
+//builder.Services.AddTransient<IMeuServico, MeuServico>();
+//builder.Services.AddScoped<ApiLoggingFilter>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
@@ -39,7 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //adiciona o middleware de tratamento de erros
-app.ConfigureExceptionHandler();
+//app.ConfigureExceptionHandler();
 
 app.UseHttpsRedirection();
 
