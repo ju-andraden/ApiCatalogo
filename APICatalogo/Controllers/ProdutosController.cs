@@ -40,16 +40,16 @@ namespace APICatalogo.Controllers
         [HttpGet("{id:int}", Name = "ObterProduto")]
         public async Task<ActionResult<Produto>> Get(int id)
         {
-            throw new Exception("Exception ao retornar produto pelo id");
+            //throw new Exception("Exception ao retornar produto pelo id");
 
-            /*var produto = await _context.Produtos.AsNoTracking()
+            var produto = await _context.Produtos.AsNoTracking()
                 .FirstOrDefaultAsync(p => p.ProdutoId == id);
 
             if (produto is null)
             {
                 return NotFound("Produto não encontrado...");
             }
-            return produto;*/
+            return produto;
         }
 
         [HttpPost]
