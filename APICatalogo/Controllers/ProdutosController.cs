@@ -4,6 +4,7 @@ using APICatalogo.Pagination;
 using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace APICatalogo.Controllers
@@ -22,34 +23,19 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet("menorpreco")]
-        public ActionResult<IEnumerable<ProdutoDto>> GetProdutosPrecos()
+        public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutosPrecos()
         {
-            //lista de todos os produtos por preco
-            var produtos = _uof.ProdutoRepository.GetProdutosPorPreco().ToList();
+            var produtos = await _uof.ProdutoRepository.GetProdutosPorPreco();
 
-            //mapeando as informações através da entidade Produto para ProdutoDto
             var produtosDto = _mapper.Map<List<ProdutoDto>>(produtos);
 
             return produtosDto;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProdutoDto>> Get(
-            [FromQuery] ProdutosParameters produtosParameters)
+        public async Task<ActionResult<IEnumerable<ProdutoDto>>> Get()
         {
-            var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters);
-
-            var metadata = new
-            {
-                produtos.TotalCount,
-                produtos.PageSize,
-                produtos.CurrentPage,
-                produtos.TotalPages,
-                produtos.HasNext,
-                produtos.HasPrevious
-            };
-
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            var produtos = await _uof.ProdutoRepository.Get().ToListAsync();
 
             var produtosDto = _mapper.Map<List<ProdutoDto>>(produtos);
 
@@ -57,9 +43,9 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet("{id}", Name = "ObterProduto")]
-        public ActionResult<ProdutoDto> Get(int id)
+        public async Task<ActionResult<ProdutoDto>> Get(int id)
         {
-            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
+            var produto = await _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
 
             if (produto is null)
             {
@@ -72,15 +58,13 @@ namespace APICatalogo.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] ProdutoDto produtoDto)
+        public async Task<ActionResult> Post([FromBody] ProdutoDto produtoDto)
         {
-            //transformando um Dto para entidade
             var produto = _mapper.Map<Produto>(produtoDto);
 
             _uof.ProdutoRepository.Add(produto);
-            _uof.Commit();
+            await _uof.Commit();
 
-            //transformando entidade para Dto
             var produtoDtoConvertido = _mapper.Map<ProdutoDto>(produto);
 
             return new CreatedAtRouteResult("ObterProduto",
@@ -88,7 +72,7 @@ namespace APICatalogo.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] ProdutoDto produtoDto)
+        public async Task<ActionResult> Put(int id, [FromBody] ProdutoDto produtoDto)
         {
             if (id != produtoDto.ProdutoId)
             {
@@ -98,15 +82,15 @@ namespace APICatalogo.Controllers
             var produto = _mapper.Map<Produto>(produtoDto);
 
             _uof.ProdutoRepository.Update(produto);
-            _uof.Commit();
+            await _uof.Commit();
 
             return Ok(produto);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<ProdutoDto> Delete(int id)
+        public async Task<ActionResult<ProdutoDto>> Delete(int id)
         {
-            var produto = _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
+            var produto = await _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
 
             if (produto is null)
             {
@@ -114,7 +98,7 @@ namespace APICatalogo.Controllers
             }
 
             _uof.ProdutoRepository.Delete(produto);
-            _uof.Commit();
+            await _uof.Commit();
 
             var produtoDto = _mapper.Map<ProdutoDto>(produto);
 
