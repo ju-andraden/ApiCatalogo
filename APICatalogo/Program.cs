@@ -1,8 +1,7 @@
 using APICatalogo.Context;
-using APICatalogo.Extensions;
-using APICatalogo.Filters;
+using APICatalogo.DTOs.Mappings;
 using APICatalogo.Repository;
-using APICatalogo.Services;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -11,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers()
-    .AddJsonOptions(options => 
+    .AddJsonOptions(options =>
         options.JsonSerializerOptions
             .ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -25,9 +24,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseMySql(mySqlConnection,
                     ServerVersion.AutoDetect(mySqlConnection)));
 
-//builder.Services.AddTransient<IMeuServico, MeuServico>();
-//builder.Services.AddScoped<ApiLoggingFilter>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+
+IMapper mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 
@@ -37,9 +42,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-//adiciona o middleware de tratamento de erros
-//app.ConfigureExceptionHandler();
 
 app.UseHttpsRedirection();
 
