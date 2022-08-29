@@ -1,5 +1,6 @@
 ﻿using APICatalogo.DTOs;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -32,10 +33,9 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProdutoDto>> Get()
+        public ActionResult<IEnumerable<ProdutoDto>> Get([FromQuery] ProdutosParameters produtosParameters)
         {
-            var produtos = _uof.ProdutoRepository.Get().ToList();
-
+            var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters).ToList();
             var produtosDto = _mapper.Map<List<ProdutoDto>>(produtos);
 
             return produtosDto;

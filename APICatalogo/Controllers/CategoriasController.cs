@@ -23,7 +23,6 @@ namespace APICatalogo.Controllers
         public ActionResult<IEnumerable<CategoriaDto>> GetCategoriasProdutos()
         {
             var categorias = _uof.CategoriaRepository.GetCategoriasProdutos().ToList();
-
             var categoriasDto = _mapper.Map<List<CategoriaDto>>(categorias);
 
             return categoriasDto;
@@ -33,7 +32,6 @@ namespace APICatalogo.Controllers
         public ActionResult<IEnumerable<CategoriaDto>> Get()
         {
             var categorias = _uof.CategoriaRepository.Get().ToList();
-
             var categoriasDto = _mapper.Map<List<CategoriaDto>>(categorias);
 
             return categoriasDto;
@@ -81,7 +79,7 @@ namespace APICatalogo.Controllers
             _uof.CategoriaRepository.Update(categoria);
             _uof.Commit();
 
-            return Ok(categoria);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
