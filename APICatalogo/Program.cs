@@ -4,6 +4,8 @@ using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -58,10 +60,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-//Jwt
-//add o manipulador de autenticação e define o esquema de autenticação usando Bearer
-//valida o emissor, a audiência e a chave
-//usando a chave secreta valida a assinatura
 builder.Services.AddAuthentication(
     JwtBearerDefaults.AuthenticationScheme).
     AddJwtBearer(options =>
@@ -77,6 +75,13 @@ builder.Services.AddAuthentication(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
     });
 
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+});
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
