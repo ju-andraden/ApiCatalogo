@@ -22,7 +22,8 @@ public class Produto
     public string? Descricao { get; set; }
 
     [Required]
-    [Column(TypeName = "decimal(10,2)")]
+    [DataType(DataType.Currency)]
+    [Column(TypeName = "decimal(8, 2)")]
     public decimal Preco { get; set; }
 
     [Required]
