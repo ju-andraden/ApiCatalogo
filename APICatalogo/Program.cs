@@ -4,8 +4,6 @@ using APICatalogo.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -20,7 +18,7 @@ builder.Services.AddControllers()
             .ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+/*builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "APICatalogo", Version = "v1" });
 
@@ -48,7 +46,7 @@ builder.Services.AddSwaggerGen(c =>
             new string[] {}
         }
     });
-});
+});*/
 
 string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -75,12 +73,26 @@ builder.Services.AddAuthentication(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
     });
 
-builder.Services.AddApiVersioning(options =>
+builder.Services.AddSwaggerGen(c =>
 {
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.ReportApiVersions = true;
-    options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "APICatalogo",
+        Description = "Catálogo de Produtos e Categorias",
+        TermsOfService = new Uri("https://andrade.net/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "andrade",
+            Email = "andrade@gmail.com",
+            Url = new Uri("https://andrade.net"),
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Usar sobre LICX",
+            Url = new Uri("https://andrade.net/license"),
+        }
+    });
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -98,7 +110,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json",
+            "APICatalogo");
+    });
 }
 
 app.UseHttpsRedirection();

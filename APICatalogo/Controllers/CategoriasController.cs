@@ -12,7 +12,7 @@ namespace APICatalogo.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CategoriasController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
