@@ -34,11 +34,6 @@ namespace APICatalogo.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> RegisterUsr([FromBody] UsuarioDto usuarioDto)
         {
-            /*if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
-            }*/
-
             var user = new IdentityUser
             {
                 UserName = usuarioDto.Email,
@@ -76,7 +71,7 @@ namespace APICatalogo.Controllers
             }
         }
 
-        public UsuarioTokenDto GeraToken(UsuarioDto usuarioDto)
+        private UsuarioTokenDto GeraToken(UsuarioDto usuarioDto)
         {
             //define declarações do usuário
             var claims = new[]
