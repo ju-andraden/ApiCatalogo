@@ -27,11 +27,18 @@ namespace APICatalogo.Controllers
         [HttpGet("produtos")]
         public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetCategoriasProdutos()
         {
-            var categorias = await _uof.CategoriaRepository.GetCategoriasProdutos();
+            try
+            {
+                var categorias = await _uof.CategoriaRepository.GetCategoriasProdutos();
+                var categoriasDto = _mapper.Map<List<CategoriaDto>>(categorias);
 
-            var categoriasDto = _mapper.Map<List<CategoriaDto>>(categorias);
-
-            return categoriasDto;
+                //throw new Exception();
+                return categoriasDto;
+            }
+            catch(Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet]

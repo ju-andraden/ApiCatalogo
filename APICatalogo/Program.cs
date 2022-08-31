@@ -18,7 +18,8 @@ builder.Services.AddControllers()
             .ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddEndpointsApiExplorer();
-/*builder.Services.AddSwaggerGen(c =>
+
+builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "APICatalogo", Version = "v1" });
 
@@ -46,7 +47,7 @@ builder.Services.AddEndpointsApiExplorer();
             new string[] {}
         }
     });
-});*/
+});
 
 string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -73,28 +74,6 @@ builder.Services.AddAuthentication(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
     });
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "APICatalogo",
-        Description = "Catálogo de Produtos e Categorias",
-        TermsOfService = new Uri("https://andrade.net/terms"),
-        Contact = new OpenApiContact
-        {
-            Name = "andrade",
-            Email = "andrade@gmail.com",
-            Url = new Uri("https://andrade.net"),
-        },
-        License = new OpenApiLicense
-        {
-            Name = "Usar sobre LICX",
-            Url = new Uri("https://andrade.net/license"),
-        }
-    });
-});
-
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var mappingConfig = new MapperConfiguration(mc =>
@@ -110,11 +89,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json",
-            "APICatalogo");
-    });
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
